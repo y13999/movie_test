@@ -16,10 +16,10 @@ def is_chinese(check_str):
 
 
 def is_all_english(check_str):
+    if check_str==' ' or check_str=='':
+        return False
     for ch in check_str:
         if ord(ch) > 255:
-            return False
-        if check_str==' ' or check_str=='':
             return False
     return True
 
@@ -212,7 +212,8 @@ if __name__ == "__main__":
             file_all[b][9]=1
 
     for b in range(number001):
-        sleep(random.random() * 1.2)
+        if newlistname[0] != 'imdb' or newlistname[0] != 'douban':
+            sleep((random.uniform(0.5,1.1) )* 2)
         if file_all[b][9]==1:
             continue
         aaaa = get_douban_html(file_all[b][2])
@@ -220,7 +221,7 @@ if __name__ == "__main__":
         if (get_douban_chinese_name(douban_name_key, aaaa) != get_douban_origin_name(douban_ori_name_key, aaaa)):
             file_all[b][6] = get_douban_origin_name(douban_ori_name_key, aaaa)
         file_all[b][7] = get_douban_point(douban_point_key, aaaa)
-        print(file_all[b][6],'________',is_all_english(file_all[b][6]))
+        print(file_all[b][6],'判断英文名是否为英文：',is_all_english(file_all[b][6]))
         if (is_all_english(file_all[b][6]) and file_all[b][6]!='') == True:
             print(file_all[b][6])
             dddd = get_imdb_html(file_all[b][6])
@@ -296,15 +297,15 @@ if __name__ == "__main__":
                 new_doc_name02+=nouse
         file_all[b][10]=new_doc_name02
         if file_all[b][11]==0 and new_doc_name != '':
-            for cc001 in range(b-1):
-                if new_doc_name02 ==file_all[b][10]:
-                    mark02=1
-                    print('有重复文件',new_doc_name02,file_all[b][1])
             print(filelist001[b], '重命名为--->', new_doc_name02)
-            rename_ok((path + filelist001[b]),(path + new_doc_name02))
+            if os.path.exists((path + new_doc_name02))==False:
+                rename_ok((path + filelist001[b]),(path + new_doc_name02))
+            else:
+                rename_ok((path + filelist001[b]), (path + new_doc_name02+'有重复文件夹'))
         elif file_all[b][11]==1 and new_doc_name != '':
             print(filelist001[b], '移动到--->', new_doc_name02)
-            if os.path.exists((path + new_doc_name02))==False:os.mkdir((path + new_doc_name02))                             #新建文件夹
+            if os.path.exists((path + new_doc_name02))==False:
+                os.mkdir((path + new_doc_name02))                             #新建文件夹
             shutil.move((path + filelist001[b]), (path + new_doc_name02))          #移动文件
         print(file_all[b])
 

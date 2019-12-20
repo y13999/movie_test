@@ -1,32 +1,46 @@
-#1.判断字符串为全中文
-
-#检验是否全是中文字符
-def is_all_chinese(strs):
-    for _char in strs:
-        if not '\u4e00' <= _char <= '\u9fa5':
-            return False
-    return True
-
-#2.判断字符串是否包含中文
-
-#检验是否含有中文字符
-def is_contains_chinese(strs):
-    for _char in strs:
-        if '\u4e00' <= _char <= '\u9fa5':
-            return True
-    return False
-
 import os
 import sys
 import random
 import re
 import requests
+import shutil
 from openpyxl import Workbook
 from time import sleep
+
+# 以下是函数###########################################
+def is_chinese(check_str):
+    for ch in check_str:
+        if u'\u4e00' <= ch <= u'\u9fff':
+            return True
+    return False
+
+
+def is_all_english(check_str):
+    if check_str==' ' or check_str=='':
+        return False
+    for ch in check_str:
+        if ord(ch) > 255:
+            return False
+    return True
+
+def rename_ok(sor,dst):
+    try:
+        os.rename(sor, dst)
+    except:
+        return print(sor,' can not rename to:',dst)
+
+# 尝试字符串转数字的函数
+def int_it(v):
+    try:
+        return int(v)
+    except:
+        return v
+
 
 def find_all_by_pat(pat, string):
     res = re.findall(pat, string)
     return res
+
 
 def get_douban_chinese_name(pat, doc):
     res_list = find_all_by_pat(pat, doc)
@@ -35,18 +49,22 @@ def get_douban_chinese_name(pat, doc):
     except:
         return ' '
 
+
 def get_douban_origin_name(pat, doc):
     res_list = find_all_by_pat(pat, doc)
     try:
         return res_list[0]
     except:
         return ' '
+
+
 def get_douban_point(pat, doc):
     res_list = find_all_by_pat(pat, doc)
     try:
         return res_list[0]
     except:
         return ' '
+
 
 def get_imdb_point(pat, doc):
     res_list = find_all_by_pat(pat, doc)
@@ -55,16 +73,18 @@ def get_imdb_point(pat, doc):
     except:
         return ' '
 
+
 def get_douban_html_doc(url):
-    pro = ['122.152.196.126', '114.215.174.227', '119.185.30.75']
+    #pro = ['122.152.196.126', '114.215.174.227', '119.185.30.75']
     head = {
         'user-Agent': 'Mozilla/5.0(Windows NT 10.0;Win64 x64)AppleWebkit/537.36(KHTML,like Gecko) chrome/58.0.3029.110 Safari/537.36'
     }
-    resopnse = requests.get(url, proxies={'http': random.choice(pro)}, headers=head)
-    #resopnse = requests.get(url, headers=head)
+    #resopnse = requests.get(url, proxies={'http': random.choice(pro)}, headers=head)
+    resopnse = requests.get(url, headers=head)
     resopnse.encoding = 'utf-8'
     html_doc = resopnse.text
     return html_doc
+
 
 def get_douban_html(query_name):
     douban_search_url = 'https://www.douban.com/search?cat=1002&q=%s' % query_name
@@ -73,12 +93,12 @@ def get_douban_html(query_name):
 
 
 def get_imdb_html_doc(url):
-    pro = ['122.152.196.126', '114.215.174.227', '119.185.30.75']
+    #pro = ['122.152.196.126', '114.215.174.227', '119.185.30.75']
     head = {
         'user-Agent': 'Mozilla/5.0(Windows NT 10.0;Win64 x64)AppleWebkit/537.36(KHTML,like Gecko) chrome/58.0.3029.110 Safari/537.36'
     }
-    resopnse = requests.get(url, proxies={'http': random.choice(pro)}, headers=head)
-    # resopnse = requests.get(url, headers=head)
+    #resopnse = requests.get(url, proxies={'http': random.choice(pro)}, headers=head)
+    resopnse = requests.get(url, headers=head)
     resopnse.encoding = 'utf-8'
     html_doc = resopnse.text
     try:
@@ -106,10 +126,31 @@ def get_imdb_html(query_name):
     try:
         return imdb_search_res_02
     except:
+        return ' '
 
-bb=get_imdb_html('Dark.Phoenix')
-imdb_point_key=r'span itemprop="ratingValue">(.*?)</span>'
-print('imdb_point:',get_imdb_point(imdb_point_key,bb))
+
+# 函数结束########################################
+print((random.uniform(0.5,1.1) )* 2)
+a=''
+b='te st'
+c='测试'
+d='测试 test'
+print(a,'is_all_english:',is_all_english(a))
+print(b,'is_all_english:',is_all_english(b))
+print(c,'is_all_english:',is_all_english(c))
+print(d,'is_all_english:',is_all_english(d))
+print(a,'',a)
+
+
+#aa=get_douban_html('Dark.Phoenix')
+#print(aa)
+
+#bb=get_imdb_html('Dark.Phoenix')
+#douban_name_key = r'qcat.*\s*.*>(.*?)\s*</a>'
+#douban_ori_name_key = r'span class="subject-cast">原名:(.*?)\s/'
+#douban_point_key = r'span class="rating_nums">(.*?)\s*</span>'
+#imdb_point_key = r'span itemprop="ratingValue">(.*?)</span>'
+#print('imdb_point:',get_imdb_point(imdb_point_key,bb))
 '''
 aa=get_douban_html('宝莱坞机器人之恋')
 pat2 = r'qcat.*\s*.*>(.*?)\s*</a>'
