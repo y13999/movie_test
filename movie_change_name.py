@@ -29,6 +29,12 @@ def rename_ok(sor,dst):
     except:
         return print(sor,' can not rename to:',dst)
 
+def move_file_ok(sor,dst):
+    try:
+        shutil.move(sor, dst)
+    except:
+        return print(sor,' can not movie to:',dst)
+
 # 尝试字符串转数字的函数
 def int_it(v):
     try:
@@ -214,6 +220,7 @@ if __name__ == "__main__":
     for b in range(number001):
         if newlistname[0] != 'imdb' or newlistname[0] != 'douban':
             sleep((random.uniform(0.5,1.1) )* 2)
+            print('sleep')
         if file_all[b][9]==1:
             continue
         aaaa = get_douban_html(file_all[b][2])
@@ -306,7 +313,12 @@ if __name__ == "__main__":
             print(filelist001[b], '移动到--->', new_doc_name02)
             if os.path.exists((path + new_doc_name02))==False:
                 os.mkdir((path + new_doc_name02))                             #新建文件夹
-            shutil.move((path + filelist001[b]), (path + new_doc_name02))          #移动文件
+            if os.path.exists(path+new_doc_name02+os.sep+filelist001[b])==False:
+                shutil.move((path + filelist001[b]), (path + new_doc_name02))          #移动文件
+            else:
+                name_tmp01='new'+filelist001[b]
+                rename_ok(filelist001[b],name_tmp01)
+                move_file_ok((path + name_tmp01), (path + new_doc_name02))
         print(file_all[b])
 
 
